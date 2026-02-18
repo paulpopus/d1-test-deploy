@@ -26,16 +26,16 @@
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.11.0",
-    "@payloadcms/db-d1-sqlite": "3.76.1",
-    "@payloadcms/next": "3.76.1",
-    "@payloadcms/richtext-lexical": "3.76.1",
-    "@payloadcms/storage-r2": "3.76.1",
-    "@payloadcms/ui": "3.76.1",
+    "@payloadcms/db-d1-sqlite": "3.77.0-internal.fd50432",
+    "@payloadcms/next": "3.77.0-internal.fd50432",
+    "@payloadcms/richtext-lexical": "3.77.0-internal.fd50432",
+    "@payloadcms/storage-r2": "3.77.0-internal.fd50432",
+    "@payloadcms/ui": "3.77.0-internal.fd50432",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "next": "15.4.11",
-    "payload": "3.76.1",
+    "payload": "3.77.0-internal.fd50432",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
@@ -73,5 +73,6 @@
         "description": "Generate a random string using `openssl rand -hex 32`"
       }
     }
-  }
+  },
+  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
 }
