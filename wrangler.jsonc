@@ -15,6 +15,7 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS",
   },
+  "observability": { "enabled": true },
   "d1_databases": [
     {
       "binding": "D1",
@@ -33,7 +34,8 @@
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "d1-test-deploy","preview_bucket_name": "d1-test-deploy",
+      "bucket_name": "d1-test-deploy",
+      "preview_bucket_name": "d1-test-deploy",
     },
     // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
     // {
