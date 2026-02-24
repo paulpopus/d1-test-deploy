@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
+import pino from 'pino'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -17,6 +18,25 @@ const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(valu
 
 const isCLI = process.argv.some((value) => realpath(value).endsWith(path.join('payload', 'bin.js')))
 const isProduction = process.env.NODE_ENV === 'production'
+
+const cloudflareLogger = pino({
+  browser: {
+    asObject: true,
+    write: (logObject: object) => {
+      const level = (logObject as { level?: number }).level ?? 30
+      const output = JSON.stringify(logObject)
+
+      if (level >= 50) {
+        console.error(output)
+      } else if (level >= 40) {
+        console.warn(output)
+      } else {
+        console.log(output)
+      }
+    },
+  },
+  level: process.env.PAYLOAD_LOG_LEVEL || 'info',
+})
 
 const cloudflare =
   isCLI || !isProduction
@@ -37,6 +57,7 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
+  logger: isProduction ? cloudflareLogger : undefined,
   plugins: [
     r2Storage({
       bucket: cloudflare.env.R2,
