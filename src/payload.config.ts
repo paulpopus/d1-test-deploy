@@ -3,11 +3,11 @@ import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
+// import type { PayloadLogger } from 'payload'
 import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
-import pino from 'pino'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -19,24 +19,25 @@ const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(valu
 const isCLI = process.argv.some((value) => realpath(value).endsWith(path.join('payload', 'bin.js')))
 const isProduction = process.env.NODE_ENV === 'production'
 
-const cloudflareLogger = pino({
-  browser: {
-    asObject: true,
-    write: (logObject: object) => {
-      const level = (logObject as { level?: number }).level ?? 30
-      const output = JSON.stringify(logObject)
+const createLog =
+  (level: string, fn: typeof console.log) => (objOrMsg: object | string, msg?: string) => {
+    if (typeof objOrMsg === 'string') {
+      fn(JSON.stringify({ level, msg: objOrMsg }))
+    } else {
+      fn(JSON.stringify({ level, ...objOrMsg, msg: msg ?? (objOrMsg as { msg?: string }).msg }))
+    }
+  }
 
-      if (level >= 50) {
-        console.error(output)
-      } else if (level >= 40) {
-        console.warn(output)
-      } else {
-        console.log(output)
-      }
-    },
-  },
+const cloudflareLogger = {
   level: process.env.PAYLOAD_LOG_LEVEL || 'info',
-})
+  trace: createLog('trace', console.debug),
+  debug: createLog('debug', console.debug),
+  info: createLog('info', console.log),
+  warn: createLog('warn', console.warn),
+  error: createLog('error', console.error),
+  fatal: createLog('fatal', console.error),
+  silent: () => {},
+} as unknown as any
 
 const cloudflare =
   isCLI || !isProduction
